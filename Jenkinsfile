@@ -1,8 +1,5 @@
 node{
-    def SF_CONSUMER_KEY=env.SF_CONSUMER_KEY
-    def SF_USERNAME=env.SF_USERNAME
     def SERVER_KEY_CREDENTIALS_ID=env.SERVER_KEY_CREDENTIALS_ID
-    def DELTACHANGES = 'deltachanges'
     def DEPLOYDIR = 'toDeploy'
     def APIVERSION = '51.0'
     def toolbelt = tool 'toolbelt'
@@ -33,14 +30,4 @@ node{
     stage('checkout source') {
         checkout scm
     }
-    withEnv(["HOME=${env.WORKSPACE}"]) {	
-	
-	    withCredentials([file(credentialsId: SERVER_KEY_CREDENTIALS_ID, variable: 'server_key_file')]) 
-
-        stage('Authorize to Salesforce') {
-			rc = command "${toolbelt}/sfdx auth:jwt:grant --instanceurl https://login.salesforce.com --clientid 3MVG9pRzvMkjMb6lSZXveI54gmUzVSHO1jDFPKhRCPq3v68enpjIxC7lBGs9mi2bh5XEUESdq8Vy1d3_gEsPq --jwtkeyfile server.key --username shivam@nagarro.com --setalias shivam@nagarro.com"
-		    if (rc != 0) {
-			error 'Salesforce org authorization failed.'
-		    }
-		}
 }
