@@ -32,25 +32,17 @@ node{
     }
     withEnv(["HOME=${env.WORKSPACE}"]) {	
 	
-	    withCredentials([file(credentialsId: SERVER_KEY_CREDENTIALS_ID, variable: 'server_key_file')]) {
+	    withCredentials([file(credentialsId: SERVER_KEY_CREDENTIALS_ID, variable: 'server.key')]) {
 		// -------------------------------------------------------------------------
 		// Authenticate to Salesforce using the server key.
 		// -------------------------------------------------------------------------
 
 		stage('Authorize to Salesforce') {
-			rc = command "${toolbelt}/sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias ${SF_USERNAME}"
+			rc = command "${toolbelt}/sfdx auth:jwt:grant --instanceurl https://login.salesforce.com --clientid 3MVG9pRzvMkjMb6lSZXveI54gmUzVSHO1jDFPKhRCPq3v68enpjIxC7lBGs9mi2bh5XEUESdq8Vy1d3_gEsPq --jwtkeyfile server.key --username shivam@nagarro.com --setalias shivam@nagarro.com"
 		    if (rc != 0) {
 			error 'Salesforce org authorization failed.'
 		    }
 		}
-
-		stage('Delta changes')
-		{
-			script
-            {
-				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom %PreviousCommitId% --revisionto %LatestCommitId% --output ${DELTACHANGES} --apiversion ${APIVERSION} -x"
-            }
-        }
         }
     }             
 }
