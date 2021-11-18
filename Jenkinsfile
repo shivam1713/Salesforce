@@ -36,15 +36,17 @@ node{
 
 		stage('Authorize to Salesforce') {
 			rc = command "${toolbelt}/sfdx auth:jwt:grant --instanceurl https://login.salesforce.com --clientid 3MVG9pRzvMkjMb6lSZXveI54gmUzVSHO1jDFPKhRCPq3v68enpjIxC7lBGs9mi2bh5XEUESdq8Vy1d3_gEsPq --jwtkeyfile server_key_file --username shivam@nagarro.com --setalias shivam@nagarro.com"
-		    
+		    if (rc != 0) {
+			error 'Salesforce org authorization failed.'
+		    }
 		}
-        stage('Delta changes')
-		{
-			script
-            {
-				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom %PreviousCommitId% --revisionto %LatestCommitId% --output ${DELTACHANGES} --apiversion ${APIVERSION} -x"
-            }     
-        }
         }
     }             
+}
+def command(script) {
+    if (isUnix()) {
+        return sh(returnStatus: true, script: script);
+    } else {
+		return bat(returnStatus: true, script: script);
+    }
 }
