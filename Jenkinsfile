@@ -29,5 +29,28 @@ node{
     }
     stage('checkout source') {
         checkout scm
-    }    
+    }
+    withEnv(["HOME=${env.WORKSPACE}"]) {	
+	
+	    withCredentials([file(credentialsId: SERVER_KEY_CREDENTIALS_ID, variable: 'server_key_file')]) {
+		// -------------------------------------------------------------------------
+		// Authenticate to Salesforce using the server key.
+		// -------------------------------------------------------------------------
+
+		stage('Authorize to Salesforce') {
+			rc = command "${toolbelt}/sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias ${SF_USERNAME}"
+		    if (rc != 0) {
+			error 'Salesforce org authorization failed.'
+		    }
+		}
+
+		stage('Delta changes')
+		{
+			script
+            {
+				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom %PreviousCommitId% --revisionto %LatestCommitId% --output ${DELTACHANGES} --apiversion ${APIVERSION} -x"
+            }
+        }
+        }
+    }             
 }
