@@ -40,6 +40,14 @@ node{
 			error 'Salesforce org authorization failed.'
 		    }
 		}
+        stage('Delta changes')
+		{
+			script
+            {
+				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom cee79af833925da191cc9355fc28a3b0d8feaadc --revisionto 6b68c1a0132cbbe223fcfed1ef8a02ad1199bb42 --output DeltaChanges --apiversion ${APIVERSION} -x"
+            }
+        }
+
         }
     }             
 }
