@@ -44,9 +44,41 @@ node{
 		{
 			script
             {
-				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom cee79af833925da191cc9355fc28a3b0d8feaadc --revisionto 6b68c1a0132cbbe223fcfed1ef8a02ad1199bb42 --output DeltaChanges --apiversion ${APIVERSION} -x"
+				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom cee79af833925da191cc9355fc28a3b0d8feaadc --revisionto  --output DeltaChanges --apiversion ${APIVERSION} -x"
             }
         }
+        stage('Validate Only') 
+		{
+			if (Deployment_Type=='Validate Only')
+			{
+				script
+				{
+				
+					if (TESTLEVEL=='NoTestRun') 
+					{
+						println TESTLEVEL
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --checkonly --wait 10 --targetusername shivam@nagarro.com "
+					}
+					else if (TESTLEVEL=='RunLocalTests') 
+					{
+						println TESTLEVEL
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --checkonly --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} --verbose --loglevel fatal"
+					}
+					else if (TESTLEVEL=='RunSpecifiedTests')
+					{
+						println TESTLEVEL
+						def Testclass = SpecifyTestClass.replaceAll('\\s','')
+						println Testclass
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --checkonly --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} -r ${Testclass} --verbose --loglevel fatal"
+					}
+   
+					else (rc != 0) 
+					{
+						error 'Validation failed.'
+					}
+				}
+			}
+   		}
 
         }
     }             
