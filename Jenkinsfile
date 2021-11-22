@@ -57,12 +57,12 @@ node{
 					if (TESTLEVEL=='NoTestRun') 
 					{
 						println TESTLEVEL
-						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --checkonly --wait 10 --targetusername shivam@nagarro.com "
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d todeploy --checkonly --wait 10 --targetusername shivam@nagarro.com "
 					}
 					else if (TESTLEVEL=='RunLocalTests') 
 					{
 						println TESTLEVEL
-						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --checkonly --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} --verbose --loglevel fatal"
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d todeploy --checkonly --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} --verbose --loglevel fatal"
 					}
 					else if (TESTLEVEL=='RunSpecifiedTests')
 					{
