@@ -40,6 +40,13 @@ node{
 			error 'Salesforce org authorization failed.'
 		    }
 		}
+		stage('sfpowekit')
+		{
+			script
+			{
+				$ sfdx plugins:install sfpowerkit
+			}
+		}
         stage('Delta changes')
 		{
 			script
