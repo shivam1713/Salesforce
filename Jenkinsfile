@@ -51,7 +51,7 @@ node{
 		{
 			script
             {
-				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom cee79af833925da191cc9355fc28a3b0d8feaadc --revisionto  --output DeltaChanges --apiversion ${APIVERSION} -x"
+				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom 7e19acba8bc2b27a24b298056f583441230efb67 --revisionto a3f16118d9c1981ed1f2ead2f1d99b2bf1eae6c9 --output DeltaChanges --apiversion ${APIVERSION} -x"
             }
         }
         stage('Validate Only') 
