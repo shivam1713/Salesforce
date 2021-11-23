@@ -40,7 +40,13 @@ node{
 			error 'Salesforce org authorization failed.'
 		    }
 		}
-	
+		stage('install sfpowekit')
+		{
+			script
+			{
+				rc = command "${tollbelt}/sfdx plugins:install sfpowerkit"
+			}
+		}
         stage('Delta changes')
 		{
 			script
