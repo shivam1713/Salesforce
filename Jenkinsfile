@@ -69,7 +69,7 @@ node{
 						println TESTLEVEL
 						def Testclass = SpecifyTestClass.replaceAll('\\s','')
 						println Testclass
-						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --checkonly --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} -r ${Testclass} --verbose --loglevel fatal"
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d todeploy --checkonly --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} -r ${Testclass} --verbose --loglevel fatal"
 					}
    
 					else (rc != 0) 
@@ -80,7 +80,38 @@ node{
 			}
    		}
 
-        }
+        stage('Deploy and Run Tests') 
+		{
+			if (Deployment_Type=='Deploy Only')
+			{	
+				script
+				{
+					if (TESTLEVEL=='NoTestRun') 
+					{
+						println TESTLEVEL
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d todeploy --wait 10 --targetusername shivam@nagarro.com "
+					}
+					else if (TESTLEVEL=='RunLocalTests') 
+					{
+						println TESTLEVEL
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d todeploy --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} --verbose --loglevel fatal"
+					}
+					else if (TESTLEVEL=='RunSpecifiedTests') 
+					{
+						println TESTLEVEL
+						def Testclass = SpecifyTestClass.replaceAll('\\s','')
+						println Testclass						
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d todeploy --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} -r ${Testclass} --verbose --loglevel fatal"
+					}
+					else (rc != 0) 
+					{
+						error 'Salesforce deployment failed.'
+					}
+				}
+			}
+		}
+
+		}
     }             
 }
 def command(script) {
