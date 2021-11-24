@@ -44,7 +44,7 @@ node{
 		{
 			script
 			{
-				rc = command "${tollbelt}/sfdx plugins:install sfpowerkit"
+				rc = command "${toolbelt}/sfdx plugins:install sfpowerkit"
 			}
 		}
         stage('Delta changes')
