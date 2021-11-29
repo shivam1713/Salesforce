@@ -3,6 +3,7 @@ node{
     def DEPLOYDIR = 'toDeploy'
     def APIVERSION = '51.0'
     def toolbelt = tool 'toolbelt'
+	
 
     if ((params.PreviousCommitId == '') || (params.LatestCommitId == ''))
 	{
@@ -45,7 +46,7 @@ node{
 			script
             {
 				bat "echo y | sfdx plugins:install sfpowerkit"
-				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom 7e19acba8bc2b27a24b298056f583441230efb67 --revisionto a3f16118d9c1981ed1f2ead2f1d99b2bf1eae6c9 --output DeltaChanges --apiversion ${APIVERSION} -x"
+				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom edc8e5ebbdb07629a86fadbfbf8f7f7b01f5d8b4 --revisionto 8bc7531c2cf816be8a5e529d6e4bf876226a5632 --output DeltaChanges --apiversion ${APIVERSION} -x"
             }
         }
         stage('Validate Only') 
