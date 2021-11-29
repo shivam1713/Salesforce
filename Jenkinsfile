@@ -49,6 +49,13 @@ node{
 				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom edc8e5ebbdb07629a86fadbfbf8f7f7b01f5d8b4 --revisionto 8bc7531c2cf816be8a5e529d6e4bf876226a5632 --output DeltaChanges --apiversion ${APIVERSION} -x"
             }
         }
+		stages('Convert metadeta')
+		{
+			script
+			{
+				rc = command "${toolbelt}/sfdx force:source:convert -d ../toDeploy
+			}
+		}
         stage('Validate Only') 
 		{
 			if (Deployment_Type=='Validate Only')
