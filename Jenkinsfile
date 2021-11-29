@@ -53,7 +53,7 @@ node{
 		{
 			script
 			{
-				rc = command "${toolbelt}/sfdx force:source:convert -d ../toDeploy
+				rc = command "${toolbelt}/sfdx force:source:convert -d ../toDeploy"
 			}
 		}
         stage('Validate Only') 
