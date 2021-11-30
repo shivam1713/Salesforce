@@ -53,7 +53,7 @@ node{
 		{
 			script
 			{
-				dir("{DeltaChanges")
+				dir("DeltaChanges")
 				{
 					rc = command "${toolbelt}/sfdx force:source:convert -d ../toDeploy"
 				}
