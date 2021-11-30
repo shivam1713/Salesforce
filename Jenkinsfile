@@ -53,7 +53,10 @@ node{
 		{
 			script
 			{
-				rc = command "${toolbelt}/sfdx force:source:convert -d ../toDeploy"
+				dir("{workspace}/{DeltaChanges}")
+				{
+					rc = command "${toolbelt}/sfdx force:source:convert -d ../toDeploy"
+				}
 			}
 		}
         stage('Validate Only') 
@@ -66,12 +69,12 @@ node{
 					if (TESTLEVEL=='NoTestRun') 
 					{
 						println TESTLEVEL
-						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d todeploy --checkonly --wait 10 --targetusername shivam@nagarro.com "
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d toDeploy --checkonly --wait 10 --targetusername shivam@nagarro.com "
 					}
 					else if (TESTLEVEL=='RunLocalTests') 
 					{
 						println TESTLEVEL
-						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d todeploy --checkonly --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} --verbose --loglevel fatal"
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d toDeploy --checkonly --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} --verbose --loglevel fatal"
 					}
 					else if (TESTLEVEL=='RunSpecifiedTests')
 					{
