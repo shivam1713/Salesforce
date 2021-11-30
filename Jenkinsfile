@@ -53,7 +53,7 @@ node{
 		{
 			script
 			{
-				dir("{workspace}/{DeltaChanges}")
+				dir("{salesforce-pipeline}/{DeltaChanges}")
 				{
 					rc = command "${toolbelt}/sfdx force:source:convert -d ../toDeploy"
 				}
