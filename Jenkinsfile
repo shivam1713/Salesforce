@@ -4,7 +4,7 @@ node{
     def APIVERSION = '51.0'
     def toolbelt = tool 'toolbelt'
 	def SF_INSTANCE_URL = env.SF_INSTANCE_URL
-	def SF_CONSUMER_KEY = ENV.SF_CONSUMER_KEY
+	def SF_CONSUMER_KEY = env.SF_CONSUMER_KEY
 	def SF_USERNAME = env.SF_USERNAME
 	def DELTACHANGES = 'deltachanges'
 	
