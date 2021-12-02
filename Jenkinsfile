@@ -3,6 +3,11 @@ node{
     def DEPLOYDIR = 'toDeploy'
     def APIVERSION = '51.0'
     def toolbelt = tool 'toolbelt'
+	def SF_INSTANCE_URL = env.SF_INSTANCE_URL
+	def SF_CONSUMER_KEY = ENV.SF_CONSUMER_KEY
+	def SF_USERNAME = env.SF_USERNAME
+	def DELTACHANGES = 'deltachanges'
+	
 	
 
     if ((params.PreviousCommitId == '') || (params.LatestCommitId == ''))
@@ -36,7 +41,7 @@ node{
 	    withCredentials([file(credentialsId: SERVER_KEY_CREDENTIALS_ID, variable: 'server_key_file')]) {
 
 		stage('Authorize to Salesforce') {
-			rc = command "${toolbelt}/sfdx auth:jwt:grant --instanceurl https://login.salesforce.com --clientid 3MVG9pRzvMkjMb6lSZXveI54gmUzVSHO1jDFPKhRCPq3v68enpjIxC7lBGs9mi2bh5XEUESdq8Vy1d3_gEsPq --jwtkeyfile ${server_key_file} --username shivam@nagarro.com --setalias shivam@nagarro.com"
+			rc = command "${toolbelt}/sfdx auth:jwt:grant --instanceurl ${SF-INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias ${SF_USERNAME}"
 		    if (rc != 0) {
 			error 'Salesforce org authorization failed.'
 		    }
@@ -46,7 +51,7 @@ node{
 			script
             {
 				//bat "echo y | sfdx plugins:install sfpowerkit"
-				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom edc8e5ebbdb07629a86fadbfbf8f7f7b01f5d8b4 --revisionto 8bc7531c2cf816be8a5e529d6e4bf876226a5632 --output DeltaChanges --apiversion ${APIVERSION} -x"
+				rc = command "${toolbelt}/sfdx sfpowerkit:project:diff --revisionfrom %PreviousCommitId% --revisionto %LatestCommitId% --output ${DELTACHANGES} --apiversion ${APIVERSION} -x"
             }
         }
 		stage('Convert metadeta')
@@ -69,19 +74,19 @@ node{
 					if (TESTLEVEL=='NoTestRun') 
 					{
 						println TESTLEVEL
-						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d toDeploy --checkonly --wait 10 --targetusername shivam@nagarro.com "
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --checkonly --wait 10 --targetusername ${SF_USERNAME} "
 					}
 					else if (TESTLEVEL=='RunLocalTests') 
 					{
 						println TESTLEVEL
-						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d toDeploy --checkonly --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} --verbose --loglevel fatal"
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --checkonly --wait 10 --targetusername ${SF_USERNAME} --testlevel ${TESTLEVEL} --verbose --loglevel fatal"
 					}
 					else if (TESTLEVEL=='RunSpecifiedTests')
 					{
 						println TESTLEVEL
 						def Testclass = SpecifyTestClass.replaceAll('\\s','')
 						println Testclass
-						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d todeploy --checkonly --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} -r ${Testclass} --verbose --loglevel fatal"
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --checkonly --wait 10 --targetusername ${SF_USERNAME} --testlevel ${TESTLEVEL} -r ${Testclass} --verbose --loglevel fatal"
 					}
    
 					else (rc != 0) 
@@ -101,19 +106,19 @@ node{
 					if (TESTLEVEL=='NoTestRun') 
 					{
 						println TESTLEVEL
-						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d todeploy --wait 10 --targetusername shivam@nagarro.com "
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --wait 10 --targetusername ${SF_USERNAME} "
 					}
 					else if (TESTLEVEL=='RunLocalTests') 
 					{
 						println TESTLEVEL
-						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d todeploy --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} --verbose --loglevel fatal"
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --wait 10 --targetusername ${SF_USERNAME} --testlevel ${TESTLEVEL} --verbose --loglevel fatal"
 					}
 					else if (TESTLEVEL=='RunSpecifiedTests') 
 					{
 						println TESTLEVEL
 						def Testclass = SpecifyTestClass.replaceAll('\\s','')
 						println Testclass						
-						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d todeploy --wait 10 --targetusername shivam@nagarro.com --testlevel ${TESTLEVEL} -r ${Testclass} --verbose --loglevel fatal"
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --wait 10 --targetusername ${SF_USERNAME} --testlevel ${TESTLEVEL} -r ${Testclass} --verbose --loglevel fatal"
 					}
 					else (rc != 0) 
 					{
@@ -122,7 +127,47 @@ node{
 				}
 			}
 		}
+		stage('Delete Components') 
+		{
+			if (Deployment_Type=='Delete Only')
+			{
+				rc = command "${toolbelt}/sfdx force:mdapi:deploy -u ${SF_USERNAME} -d ${DELTACHANGES} -w 1"
+				
+			}
+		}
 
+		stage('Delete and Deploy') 
+		{
+			if (Deployment_Type=='Delete and Deploy')
+			{
+				script
+				{
+					if (TESTLEVEL=='NoTestRun') 
+					{
+						println TESTLEVEL
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --wait 10 --targetusername ${SF_USERNAME} "
+					}
+					else if (TESTLEVEL=='RunLocalTests') 
+					{
+						println TESTLEVEL
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --wait 10 --targetusername ${SF_USERNAME} --testlevel ${TESTLEVEL} --verbose --loglevel fatal"
+					}
+					else if (TESTLEVEL=='RunSpecifiedTests') 
+					{
+						println TESTLEVEL
+						def Testclass = SpecifyTestClass.replaceAll('\\s','')
+						println Testclass						
+						rc = command "${toolbelt}/sfdx force:mdapi:deploy -d ${DEPLOYDIR} --wait 10 --targetusername ${SF_USERNAME} --testlevel ${TESTLEVEL} -r ${Testclass} --verbose --loglevel fatal"
+					}
+					else (rc != 0) 
+					{
+						error 'Salesforce deployment failed.'
+					}
+				}
+				
+			}
+
+		}
 		}
     }             
 }
