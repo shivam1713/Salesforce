@@ -1,0 +1,23 @@
+[
+  {
+    "action": "Deploy",
+    "metadataType": "ApexClass",
+    "componentName": "Shivam",
+    "message": "",
+    "path": "DeltaChanges\\force-app\\main\\default\\classes\\Shivam.cls-meta.xml"
+  },
+  {
+    "action": "Deploy",
+    "metadataType": "ApexClass",
+    "componentName": "TaskUtil",
+    "message": "",
+    "path": "DeltaChanges\\force-app\\main\\default\\classes\\TaskUtil.cls-meta.xml"
+  },
+  {
+    "action": "Deploy",
+    "metadataType": "ApexClass",
+    "componentName": "TemperatureConverterTest",
+    "message": "",
+    "path": "DeltaChanges\\force-app\\main\\default\\classes\\TemperatureConverterTest.cls-meta.xml"
+  }
+]
