@@ -36,6 +36,11 @@ node{
     stage('checkout source') {
         checkout scm
     }
+    stage('Email'){
+	    mail bcc: '', body: '''Hi welcome to jenkins email alert
+            Thanks and regards
+            shivam bhardwaj''', cc: '', from: '', replyTo: '', subject: 'Pipeline failed', to: 'shivambd171099@gmail.com'
+    }
     withEnv(["HOME=${env.WORKSPACE}"]) {	
 	
 	    withCredentials([file(credentialsId: SERVER_KEY_CREDENTIALS_ID, variable: 'server_key_file')]) {
